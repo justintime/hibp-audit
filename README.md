@@ -2,7 +2,7 @@
 
 This powershell script uses the sorted hash available from [HaveIBeenPwned](https://haveibeenpwned.com/Passwords) combined with the PowerShell module DSInterals to provide a very fast and effective way to audit your users' account passwords against those found in prior public breaches.
 
-The use case is to use this script as part of your routine audits.  As companies begin to follow NIST's recommendations to relax restrictions and rotation requirements on passwords, it's important to make sure that you test your user's passwords to ensure they haven't been breached.  This tool aims to automate a big chunk of that work.
+The use case is to use this script as part of your routine audits.  As companies begin to follow NIST's recommendations to relax restrictions and rotation requirements on passwords, it's important to make sure that you test your user's passwords to ensure they haven't been breached.  This tool aims to automate a big chunk of that work.  Everything else I could find dealt with using copies of NTDIS.DIT, which is unwieldy, hard to automate, and increases your attack surface.
 
 ## Performance
 Because DSInternals is able to use the sorted hash file from HIBP, it can do binary searches and ends up being blazingly fast.  I'm able to audit 2,200 AD users against the ~20GB HIBPv4 hash file in less than a minute on a VM with a single CPU and 4GB RAM.
