@@ -1,5 +1,4 @@
 param (
-    $account        = $(Get-Content Env:\USERNAME),
     $domain         = $(Get-ADDomain | Select-Object -ExpandProperty name),
     # Get the link for the HIBP hash file at https://haveibeenpwned.com/Passwords
     $hibpurl        = "https://downloads.pwnedpasswords.com/passwords/pwned-passwords-ntlm-ordered-by-hash-v4.7z",
