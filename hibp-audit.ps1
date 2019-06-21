@@ -177,4 +177,5 @@ Write-Host "HIBP Audit completed.  Please see $outputfile for results."
 Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 1 -Message "HIBP Audit script completed successfully against the domain $domain."
 if ($compromisedcount.count -gt 0) {
     Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 2 -Message "HIBP Audit found $($compromisedcount.count) compromised accounts in the $domain domain."
+    Write-Host "HIBP Audit found $($compromisedcount.count) compromised accounts in the $domain domain."
 }
