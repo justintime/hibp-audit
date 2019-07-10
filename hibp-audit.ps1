@@ -169,7 +169,6 @@ try {
     exit 1
 }
 
-
 # Log vulnerable users
 $compromisedcount = $results | Select-Object -ExpandProperty WeakPassword | Measure-Object
 
@@ -178,4 +177,7 @@ Write-EventLog -LogName Application -Source $eventsource -EntryType Information 
 if ($compromisedcount.count -gt 0) {
     Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 2 -Message "HIBP Audit found $($compromisedcount.count) compromised accounts in the $domain domain."
     Write-Host "HIBP Audit found $($compromisedcount.count) compromised accounts in the $domain domain."
+    foreach ($account in $results | Select-Object -ExpandProperty WeakPassword) {
+        Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 3 -Message "HIBP Audit found the password for $domain\$account in a breach database."
+    }
 }
