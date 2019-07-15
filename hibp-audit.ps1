@@ -27,6 +27,7 @@ function Get-FileFromURL {
 
     process {
         try {
+            [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11"
             $request = [System.Net.HttpWebRequest]::Create($URL)
             $request.set_Timeout(5000) # 5 second timeout
             $request.IfModifiedSince = ([System.IO.FileInfo]$Filename).LastWriteTime
@@ -139,7 +140,7 @@ $new = Get-FileFromURL $hibpurl $hibpfile
 if ($new) {
     Write-Host "Done transfering hashes."
     # Remove everything from the download directory except for the original 7z file
-    Remove-Item $downloaddir -Exclude *.7z
+    Remove-Item -Recurse $downloaddir -Exclude *.7z
 } else {
     Write-Host "Previously downloaded file is up to date."
 }
