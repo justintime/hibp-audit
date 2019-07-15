@@ -1,7 +1,7 @@
 param (
     $domain         = $(Get-ADDomain | Select-Object -ExpandProperty name),
     # Get the link for the HIBP hash file at https://haveibeenpwned.com/Passwords
-    $hibpurl        = "https://downloads.pwnedpasswords.com/passwords/pwned-passwords-ntlm-ordered-by-hash-v4.7z",
+    $hibpurl        = "https://downloads.pwnedpasswords.com/passwords/pwned-passwords-ntlm-ordered-by-hash-v5.7z",
     $eventsource    = "HIBP-Audit",
     $workingdir     = "C:\hibp-audit"
 )
