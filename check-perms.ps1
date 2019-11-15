@@ -39,9 +39,8 @@ Function Check-ReplicateChanges([string]$userName)
     $dse = [ADSI]"LDAP://Rootdse"
  
     $entries = @(
-        [ADSI]("LDAP://" + $dse.defaultNamingContext),
- 
-        [ADSI]("LDAP://" + $dse.configurationNamingContext));
+        [ADSI]("LDAP://" + $dse.defaultNamingContext) #, [ADSI]("LDAP://" + $dse.configurationNamingContext)
+        );
     Write-Host " User '$userName': "
  
     foreach($entry in $entries)
