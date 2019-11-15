@@ -26,3 +26,5 @@ Aside from those rights, you'll need to install a couple of modules as administr
 ## Running the script
 
 If run without any arguments, the script will download the HIBP v4 hashes file, and run it against the domain of the currently logged on user.  You can customize the domain with the ```-domain``` argument, and you can use a custom (or updated) URL with the ```-hibpurl``` argument.
+
+If there's one or more particular OU's that you'd like to whitelist from being alerted on, you can add them, one per line, to a file named ```excludes.txt``` in the same file as the script.

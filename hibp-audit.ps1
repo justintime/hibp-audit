@@ -1,9 +1,10 @@
 param (
-    $domain         = $(Get-ADDomain | Select-Object -ExpandProperty name),
+    $domain             = $(Get-ADDomain | Select-Object -ExpandProperty name),
     # Get the link for the HIBP hash file at https://haveibeenpwned.com/Passwords
-    $hibpurl        = "https://downloads.pwnedpasswords.com/passwords/pwned-passwords-ntlm-ordered-by-hash-v5.7z",
-    $eventsource    = "HIBP-Audit",
-    $workingdir     = "C:\hibp-audit"
+    $hibpurl            = "https://downloads.pwnedpasswords.com/passwords/pwned-passwords-ntlm-ordered-by-hash-v5.7z",
+    $eventsource        = "HIBP-Audit",
+    $workingdir         = "C:\hibp-audit",
+    $excludes_file      = "$workingdir\excludes.txt"
 )
 
 $requiredmodules = @("DSInternals", "ActiveDirectory")
@@ -170,15 +171,29 @@ try {
     exit 1
 }
 
-# Log vulnerable users
-$compromisedcount = $results | Select-Object -ExpandProperty WeakPassword | Measure-Object
-
-Write-Host "HIBP Audit completed.  Please see $outputfile for results."
-Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 1 -Message "HIBP Audit script completed successfully against the domain $domain."
-if ($compromisedcount.count -gt 0) {
-    Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 2 -Message "HIBP Audit found $($compromisedcount.count) compromised accounts in the $domain domain."
-    Write-Host "HIBP Audit found $($compromisedcount.count) compromised accounts in the $domain domain."
-    foreach ($account in $results | Select-Object -ExpandProperty WeakPassword) {
-        Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 3 -Message "HIBP Audit found the password for $domain\$account in a breach database."
+# Build our exclude list
+$excludes = New-Object System.Collections.ArrayList
+if (Test-Path $excludes_file) {
+    $excluded = Get-Content $excludes_file
+    foreach ($ou in $excluded) {
+        foreach ($user in Get-ADUser -Filter * -SearchBase "$ou") {
+            $excludes.Add($user.SamAccountName)
+        }
     }
 }
+
+# Log vulnerable users
+$compromisedcount = 0
+foreach ($account in $results | Select-Object -ExpandProperty WeakPassword) {
+    if ($account -notin $excludes) {
+        Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 3 -Message "HIBP Audit found the password for $domain\$account in a breach database."
+        $compromisedcount++
+    }
+}
+
+if ($compromisedcount -gt 0) {
+    Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 2 -Message "HIBP Audit found $($compromisedcount) compromised accounts in the $domain domain."
+    Write-Host "HIBP Audit found $($compromisedcount) compromised accounts in the $domain domain."
+}
+Write-Host "HIBP Audit completed.  Please see $outputfile for results."
+Write-EventLog -LogName Application -Source $eventsource -EntryType Information -EventId 1 -Message "HIBP Audit script completed successfully against the domain $domain."
