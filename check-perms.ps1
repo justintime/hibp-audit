@@ -1,6 +1,8 @@
+param (
+    $user = $(throw "-user is a required option.  Use DOMAIN\username formatting.")
+)
+
 Import-module activedirectory
- 
-$UserProfileAccountName = "BUCKLEHQ\spyker.admin"
  
 Function Check-ADUserPermission(
     [System.DirectoryServices.DirectoryEntry]$entry, 
@@ -56,4 +58,4 @@ Function Check-ReplicateChanges([string]$userName)
     }
 }
  
-Check-ReplicateChanges $UserProfileAccountName
+Check-ReplicateChanges $user
